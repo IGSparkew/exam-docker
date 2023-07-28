@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  graphql-auth:
+    build:
+      context: ./graphql-auth
+      dockerfile: DockerfileDev
+    environment:
+      PORT: ${PORT}
+      DATABASE_URL: mysql://root:${MYSQL_ROOT_PASSWORD}@mariadb:3306/${MYSQL_DATABASE}  
+      JWT_SECRET: ${JWT_SECRET}
+    volumes:
+      - ./graphql-auth:/app  
+    ports:
+      - 3000:3000
+
   mariadb:
     image: mariadb
     restart: always
@@ -8,7 +21,7 @@ services:
     environment:
       MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MARIADB_DATABASE: ${MYSQL_DATABASE}
-    
+
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 30s
